@@ -267,6 +267,15 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  .animate-scale-in {
+    animation: scale-in-anim 0.2s ease-out forwards;
+  }
+
+  @keyframes scale-in-anim {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 4px;
