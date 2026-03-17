@@ -87,7 +87,19 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     root.style.setProperty('--card-foreground', found.primary);
     root.style.setProperty('--accent', found.primary);
     root.style.setProperty('--ring', found.primary);
-    root.style.setProperty('--border', found.primary.replace(/50%$/, '20%').replace(/65%$/, '20%').replace(/55%$/, '20%').replace(/85%$/, '30%').replace(/60%$/, '20%'));
+
+    // Compute a darker version for borders
+    const borderHsl = found.primary.replace(/\d+%\s*$/, '20%');
+    root.style.setProperty('--border', borderHsl);
+    root.style.setProperty('--input', borderHsl);
+
+    // Update muted-foreground to match hue
+    const muteMatch = found.primary.match(/^(\d+)/);
+    if (muteMatch) {
+      root.style.setProperty('--muted-foreground', `${muteMatch[1]} 40% 45%`);
+    }
+
+    // Update glow variable so all CSS glows react
     root.style.setProperty('--glow-primary', found.glow);
   }, []);
 

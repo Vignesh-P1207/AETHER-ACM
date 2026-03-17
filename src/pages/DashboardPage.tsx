@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import HudCorners from '@/components/HudCorners';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void;
@@ -24,6 +25,7 @@ const groundStations = [
 ];
 
 const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
+  const { theme } = useTheme();
   const [sats, setSats] = useState(initSats);
   const [metrics, setMetrics] = useState({ collisions: 0, deltaV: 0, uptime: 99.97, warnings: 3 });
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -56,14 +58,24 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  const fuelColor = (f: number) => f > 60 ? 'hsl(152 100% 50%)' : f > 30 ? 'hsl(40 100% 50%)' : 'hsl(0 85% 55%)';
+  // Compute theme-dependent color strings for SVGs
+  const primaryHex = theme.primaryHex;
+  const primaryAlpha = (alpha: number) => {
+    // Convert hex to rgba with alpha
+    const r = parseInt(primaryHex.slice(1, 3), 16);
+    const g = parseInt(primaryHex.slice(3, 5), 16);
+    const b = parseInt(primaryHex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  };
+
+  const fuelColor = (f: number) => f > 60 ? primaryHex : f > 30 ? 'hsl(40 100% 50%)' : 'hsl(0 85% 55%)';
   const statusClass = (s: string) => s === 'NOMINAL' ? 'crt-glow' : s === 'WARNING' ? 'crt-glow-warning text-secondary blink-slow' : 'crt-glow-destructive text-destructive blink';
   const statusBgClass = (s: string) => s === 'NOMINAL' ? 'bg-primary/10' : s === 'WARNING' ? 'bg-secondary/10' : 'bg-destructive/10';
 
   const conjunctions = Array.from({ length: 15 }, () => ({
     angle: Math.random() * 360,
     distance: 0.15 + Math.random() * 0.85,
-    color: Math.random() > 0.7 ? '#ff2a2a' : Math.random() > 0.4 ? '#ffb300' : '#00ff88',
+    color: Math.random() > 0.7 ? '#ff2a2a' : Math.random() > 0.4 ? '#ffb300' : primaryHex,
   }));
 
   return (
@@ -164,14 +176,14 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
               { r: 20, label: '0.5km' },
             ].map(ring => (
               <g key={ring.r}>
-                <circle cx="100" cy="100" r={ring.r} fill="none" stroke="#00ff8822" strokeWidth="0.5" />
-                <text x={102} y={100 - ring.r + 8} fill="#00ff8844" fontSize="5" fontFamily="'Orbitron'">{ring.label}</text>
+                <circle cx="100" cy="100" r={ring.r} fill="none" stroke={primaryAlpha(0.13)} strokeWidth="0.5" />
+                <text x={102} y={100 - ring.r + 8} fill={primaryAlpha(0.27)} fontSize="5" fontFamily="'Orbitron'">{ring.label}</text>
               </g>
             ))}
-            <line x1="100" y1="15" x2="100" y2="185" stroke="#00ff8815" strokeWidth="0.5" />
-            <line x1="15" y1="100" x2="185" y2="100" stroke="#00ff8815" strokeWidth="0.5" />
-            <line x1="30" y1="30" x2="170" y2="170" stroke="#00ff8810" strokeWidth="0.3" />
-            <line x1="170" y1="30" x2="30" y2="170" stroke="#00ff8810" strokeWidth="0.3" />
+            <line x1="100" y1="15" x2="100" y2="185" stroke={primaryAlpha(0.08)} strokeWidth="0.5" />
+            <line x1="15" y1="100" x2="185" y2="100" stroke={primaryAlpha(0.08)} strokeWidth="0.5" />
+            <line x1="30" y1="30" x2="170" y2="170" stroke={primaryAlpha(0.06)} strokeWidth="0.3" />
+            <line x1="170" y1="30" x2="30" y2="170" stroke={primaryAlpha(0.06)} strokeWidth="0.3" />
             {conjunctions.map((c, i) => {
               const rad = (c.angle * Math.PI) / 180;
               const dist = c.distance * 78;
@@ -185,11 +197,11 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
                 </g>
               );
             })}
-            <circle cx="100" cy="100" r="5" fill="#00ff88" opacity="0.8" />
-            <circle cx="100" cy="100" r="8" fill="none" stroke="#00ff88" strokeWidth="0.5" opacity="0.4" />
+            <circle cx="100" cy="100" r="5" fill={primaryHex} opacity="0.8" />
+            <circle cx="100" cy="100" r="8" fill="none" stroke={primaryHex} strokeWidth="0.5" opacity="0.4" />
           </svg>
           <div className="flex justify-center gap-6 mt-3 text-[9px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{ background: '#00ff88', boxShadow: '0 0 4px #00ff88' }} />SAFE</span>
+            <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{ background: primaryHex, boxShadow: `0 0 4px ${primaryHex}` }} />SAFE</span>
             <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{ background: '#ffb300', boxShadow: '0 0 4px #ffb300' }} />CAUTION</span>
             <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{ background: '#ff2a2a', boxShadow: '0 0 4px #ff2a2a' }} />DANGER</span>
           </div>
@@ -218,7 +230,7 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
                         style={{
                           left: `${(b.start / 80) * 100}%`,
                           width: `${(b.duration / 80) * 100}%`,
-                          background: 'linear-gradient(180deg, hsl(152 100% 50% / 0.8), hsl(152 100% 50% / 0.5))',
+                          background: `linear-gradient(180deg, ${primaryAlpha(0.8)}, ${primaryAlpha(0.5)})`,
                         }}
                       />
                       <div
@@ -236,7 +248,7 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
             ))}
           </div>
           <div className="flex gap-6 mt-4 text-[9px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="inline-block w-4 h-2.5 rounded-sm" style={{ background: 'linear-gradient(180deg, hsl(152 100% 50% / 0.8), hsl(152 100% 50% / 0.5))' }} />BURN WINDOW</span>
+            <span className="flex items-center gap-1"><span className="inline-block w-4 h-2.5 rounded-sm" style={{ background: `linear-gradient(180deg, ${primaryAlpha(0.8)}, ${primaryAlpha(0.5)})` }} />BURN WINDOW</span>
             <span className="flex items-center gap-1"><span className="inline-block w-4 h-2.5 rounded-sm" style={{ background: 'repeating-linear-gradient(90deg, hsl(40 100% 50% / 0.3), hsl(40 100% 50% / 0.3) 2px, transparent 2px, transparent 4px)' }} />COOLDOWN</span>
           </div>
         </div>
@@ -251,29 +263,29 @@ const DashboardPage = ({ onNavigate }: DashboardPageProps) => {
           <svg viewBox="0 0 100 60" className="w-full">
             {/* Grid lines */}
             {Array.from({ length: 11 }, (_, i) => (
-              <line key={`v${i}`} x1={i * 10} y1="0" x2={i * 10} y2="60" stroke="#00ff8808" strokeWidth="0.2" />
+              <line key={`v${i}`} x1={i * 10} y1="0" x2={i * 10} y2="60" stroke={primaryAlpha(0.03)} strokeWidth="0.2" />
             ))}
             {Array.from({ length: 7 }, (_, i) => (
-              <line key={`h${i}`} x1="0" y1={i * 10} x2="100" y2={i * 10} stroke="#00ff8808" strokeWidth="0.2" />
+              <line key={`h${i}`} x1="0" y1={i * 10} x2="100" y2={i * 10} stroke={primaryAlpha(0.03)} strokeWidth="0.2" />
             ))}
             {/* Continents */}
-            <path d="M15,22 L20,20 L30,22 L33,28 L30,40 L25,45 L18,42 L15,35 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
-            <path d="M38,16 L48,14 L58,17 L60,22 L55,30 L48,33 L40,30 L38,22 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
-            <path d="M60,20 L70,18 L75,22 L73,32 L65,35 L60,28 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
-            <path d="M44,38 L50,36 L54,40 L52,50 L46,52 L42,46 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
-            <path d="M72,38 L82,36 L86,42 L84,52 L76,55 L72,48 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
-            <path d="M5,26 L10,24 L13,28 L11,34 L7,35 L5,30 Z" fill="none" stroke="#00ff8825" strokeWidth="0.5" />
+            <path d="M15,22 L20,20 L30,22 L33,28 L30,40 L25,45 L18,42 L15,35 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
+            <path d="M38,16 L48,14 L58,17 L60,22 L55,30 L48,33 L40,30 L38,22 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
+            <path d="M60,20 L70,18 L75,22 L73,32 L65,35 L60,28 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
+            <path d="M44,38 L50,36 L54,40 L52,50 L46,52 L42,46 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
+            <path d="M72,38 L82,36 L86,42 L84,52 L76,55 L72,48 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
+            <path d="M5,26 L10,24 L13,28 L11,34 L7,35 L5,30 Z" fill="none" stroke={primaryAlpha(0.15)} strokeWidth="0.5" />
             {/* Stations with animated coverage */}
             {groundStations.map(gs => (
               <g key={gs.name}>
-                <circle cx={gs.x} cy={gs.y} r="10" fill="none" stroke="#00ff8830" strokeWidth="0.3" strokeDasharray="1.5 1" />
-                <circle cx={gs.x} cy={gs.y} r="6" fill="#00ff8808" stroke="#00ff8820" strokeWidth="0.2" />
-                <circle cx={gs.x} cy={gs.y} r="1.8" fill="#00ff88" />
-                <circle cx={gs.x} cy={gs.y} r="3" fill="none" stroke="#00ff8866" strokeWidth="0.3">
+                <circle cx={gs.x} cy={gs.y} r="10" fill="none" stroke={primaryAlpha(0.19)} strokeWidth="0.3" strokeDasharray="1.5 1" />
+                <circle cx={gs.x} cy={gs.y} r="6" fill={primaryAlpha(0.03)} stroke={primaryAlpha(0.13)} strokeWidth="0.2" />
+                <circle cx={gs.x} cy={gs.y} r="1.8" fill={primaryHex} />
+                <circle cx={gs.x} cy={gs.y} r="3" fill="none" stroke={primaryAlpha(0.4)} strokeWidth="0.3">
                   <animate attributeName="r" from="1.8" to="5" dur="2s" repeatCount="indefinite" />
                   <animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite" />
                 </circle>
-                <text x={gs.x} y={gs.y + 6} textAnchor="middle" fill="#00ff8888" fontSize="2" fontFamily="'Orbitron'" letterSpacing="0.5">{gs.name}</text>
+                <text x={gs.x} y={gs.y + 6} textAnchor="middle" fill={primaryAlpha(0.53)} fontSize="2" fontFamily="'Orbitron'" letterSpacing="0.5">{gs.name}</text>
               </g>
             ))}
           </svg>

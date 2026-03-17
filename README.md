@@ -1,73 +1,41 @@
-# Welcome to your Lovable project
+# Orbital Insight | Advanced Command Console
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Orbital Insight is a futuristic, high-performance command interface for autonomous satellite constellation management. It features a high-fidelity 3D orbital simulation, real-time debris tracking, and a mission-critical dashboard for satellite operations.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **High-Fidelity 3D Earth**: Procedurally generated, high-resolution Earth with realistic lighting and orbital mechanics.
+- **Satellite Tracking**: Real-time simulation of active satellite constellations.
+- **Debris Monitoring**: Advanced visualization of orbital debris with proximity warning systems.
+- **Dynamic HUD**: Cyberpunk-inspired heads-up display with CRT-glow and scanline effects.
+- **Universal Theme System**: Integrated theme picker to adapt the console's aesthetic.
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Three.js**: Native WebGL 3D engine for the orbital simulation.
+- **Vite & React**: Lightning-fast development and component-based UI.
+- **Radix UI & shadcn/ui**: Accessible, high-quality primitive components.
+- **Tailwind CSS**: Utility-first styling for complex HUD layouts.
+- **TypeScript**: Static typing for mission-critical reliability.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Local Development
 
-**Use your preferred IDE**
+1. **Install dependencies**:
+   ```sh
+   npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Start the development server**:
+   ```sh
+   npm run dev
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Build for production**:
+   ```sh
+   npm run build
+   ```
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+*Command and Control for the High Frontier.*

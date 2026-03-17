@@ -39,7 +39,7 @@
     --warning: 40 100% 50%;
     --warning-foreground: 0 0% 0%;
 
-    --glow-primary: 0 0 10px hsl(152 100% 50% / 0.5), 0 0 30px hsl(152 100% 50% / 0.2);
+    --glow-primary: 0 0 10px hsl(var(--primary) / 0.5), 0 0 30px hsl(var(--primary) / 0.2);
     --glow-warning: 0 0 10px hsl(40 100% 50% / 0.5), 0 0 30px hsl(40 100% 50% / 0.2);
     --glow-destructive: 0 0 10px hsl(0 85% 55% / 0.5), 0 0 30px hsl(0 85% 55% / 0.2);
 
@@ -66,8 +66,8 @@
   }
 
   ::selection {
-    background: hsl(152 100% 50% / 0.3);
-    color: hsl(152 100% 50%);
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -76,7 +76,7 @@
 }
 
 @layer components {
-  /* Scanline overlay */
+  /* Scanline overlay — uses theme color */
   .scanlines::after {
     content: '';
     position: fixed;
@@ -88,16 +88,16 @@
       0deg,
       transparent,
       transparent 2px,
-      hsl(152 100% 50% / 0.03) 2px,
-      hsl(152 100% 50% / 0.03) 4px
+      hsl(var(--primary) / 0.03) 2px,
+      hsl(var(--primary) / 0.03) 4px
     );
     pointer-events: none;
     z-index: 9999;
   }
 
-  /* CRT glow on text */
+  /* CRT glow on text — uses CSS variable */
   .crt-glow {
-    text-shadow: 0 0 5px hsl(152 100% 50% / 0.8), 0 0 15px hsl(152 100% 50% / 0.4), 0 0 30px hsl(152 100% 50% / 0.2);
+    text-shadow: 0 0 5px hsl(var(--primary) / 0.8), 0 0 15px hsl(var(--primary) / 0.4), 0 0 30px hsl(var(--primary) / 0.2);
   }
 
   .crt-glow-warning {
@@ -108,20 +108,20 @@
     text-shadow: 0 0 5px hsl(0 85% 55% / 0.8), 0 0 15px hsl(0 85% 55% / 0.4);
   }
 
-  /* HUD panel with green glow border */
+  /* HUD panel with themed glow border */
   .hud-panel {
     @apply bg-card border border-border rounded-sm relative;
-    box-shadow: var(--glow-primary), inset 0 1px 0 hsl(152 100% 50% / 0.1);
+    box-shadow: var(--glow-primary), inset 0 1px 0 hsl(var(--primary) / 0.1);
   }
 
-  /* HUD corner brackets */
+  /* HUD corner brackets — uses CSS variable */
   .hud-brackets::before,
   .hud-brackets::after {
     content: '';
     position: absolute;
     width: 20px;
     height: 20px;
-    border-color: hsl(152 100% 50%);
+    border-color: hsl(var(--primary));
     pointer-events: none;
   }
 
@@ -149,7 +149,7 @@
     position: absolute;
     width: 20px;
     height: 20px;
-    border-color: hsl(152 100% 50%);
+    border-color: hsl(var(--primary));
     pointer-events: none;
     z-index: 10;
   }
@@ -168,11 +168,11 @@
     border-right: 2px solid;
   }
 
-  /* Grid background */
+  /* Grid background — uses CSS variable */
   .grid-bg {
     background-image: 
-      linear-gradient(hsl(152 100% 50% / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(152 100% 50% / 0.05) 1px, transparent 1px);
+      linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
@@ -192,7 +192,7 @@
 
   @keyframes pulse-glow {
     0%, 100% { box-shadow: var(--glow-primary); }
-    50% { box-shadow: 0 0 20px hsl(152 100% 50% / 0.6), 0 0 40px hsl(152 100% 50% / 0.3); }
+    50% { box-shadow: 0 0 20px hsl(var(--primary) / 0.6), 0 0 40px hsl(var(--primary) / 0.3); }
   }
 
   .pulse-glow {
@@ -206,7 +206,7 @@
 
   .status-nominal {
     @apply bg-primary;
-    box-shadow: 0 0 6px hsl(152 100% 50%);
+    box-shadow: 0 0 6px hsl(var(--primary));
   }
 
   .status-warning {
@@ -223,26 +223,26 @@
   /* Fuel bar */
   .fuel-bar {
     @apply h-2 rounded-sm;
-    background: hsl(152 100% 50% / 0.2);
+    background: hsl(var(--primary) / 0.2);
   }
 
   .fuel-bar-fill {
     @apply h-full rounded-sm transition-all duration-500;
   }
 
-  /* HUD button */
+  /* HUD button — uses CSS variable */
   .hud-btn {
     @apply px-6 py-3 border border-primary font-bold tracking-widest uppercase;
     font-family: 'Orbitron', sans-serif;
     font-size: 0.75rem;
-    color: hsl(152 100% 50%);
-    background: hsl(152 100% 50% / 0.05);
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.05);
     transition: all 0.2s;
     position: relative;
   }
 
   .hud-btn:hover {
-    background: hsl(152 100% 50% / 0.15);
+    background: hsl(var(--primary) / 0.15);
     box-shadow: var(--glow-primary);
   }
 
@@ -284,6 +284,6 @@
     background: hsl(170 100% 2%);
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(152 100% 50% / 0.3);
+    background: hsl(var(--primary) / 0.3);
   }
 }
