@@ -38,29 +38,19 @@ It simulates, monitors, and autonomously protects a **50-satellite LEO constella
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    AETHER SYSTEM ARCHITECTURE                   │
-├──────────────────┬──────────────────────────────────────────────┤
-│                  │                                              │
-│   🖥️ Frontend    │   ⚙️  Backend (FastAPI)                      │
-│   React + Vite   │                                              │
-│   Three.js 3D    │   ┌──────────────────────────────────┐      │
-│   TailwindCSS    │   │  RK4 Propagator (J2/J3/J4)       │      │
-│                  │   │  KD-Tree Conjunction Engine        │      │
-│   ┌──────────┐   │   │  RTN Maneuver Planner             │      │
-│   │ EarthGlobe│  │   │  Ground Station Comms             │      │
-│   │ Dashboard │◄─┼──►│  Fleet Fuel Optimizer              │      │
-│   │ CDM Feed  │   │   │  SQLite Event Logger              │      │
-│   │ Telemetry │   │   └──────────────────────────────────┘      │
-│   └──────────┘   │                                              │
-│                  │   GET  /api/health                           │
-│                  │   GET  /api/visualization/snapshot           │
-│                  │   POST /api/simulate/step                    │
-│                  │   POST /api/telemetry                        │
-│                  │   POST /api/maneuver/schedule                │
-│                  │   POST /api/auto-evade                       │
-│                  │   GET  /api/report                           │
-│                  │   GET  /api/coverage/windows                 │
-│                  │   WS   /ws/realtime                          │
-└──────────────────┴──────────────────────────────────────────────┘
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   🖥️ High-Performance V8 Engine (Browser / Node)               │
+│                                                                 │
+│   ┌───────────────┐     ┌──────────────────────────────────┐   │
+│   │ UI Layer      │◄────┤  Core Physics Simulator          │   │
+│   │ • React / Vite│     │  • RK4 Propagator (J2/J3/J4)     │   │
+│   │ • Three.js 3D │     │  • KD-Tree Conjunction Engine    │   │
+│   │ • WebGL Swarm │     │  • RTN Maneuver Planner          │   │
+│   │ • Dashboard   │────►│  • Ground Station Comms          │   │
+│   └───────────────┘     │  • Fleet Fuel Optimizer          │   │
+│                         └──────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -160,36 +150,34 @@ Decision Cascade
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Node.js | ≥ 18 | Frontend build |
-| Python | ≥ 3.10 | Backend runtime |
-| pip | latest | Python packages |
+| Node.js | ≥ 18 | Engine runtime / Frontend build |
+| npm/yarn | latest | Package management |
 
-### Installation & Launch
+### Installation & Launch (Development)
 
 ```bash
 # Clone the repository
 git clone https://github.com/your-team/project-aether.git
 cd project-aether
 
-# ── Frontend Setup ──
+# Install dependencies and start the real-time simulation
 npm install
-npm run dev          # → http://localhost:8080
-
-# ── Backend Setup (separate terminal) ──
-cd backend
-pip install -r requirements.txt
-python main.py       # → http://localhost:8000
+npm run dev
 ```
+*The simulation dashboard will launch instantly at `http://localhost:8080`, running 100% locally with zero backend latency.*
 
-The Vite dev server automatically proxies `/api/*` requests to the Python backend.
+### Production Build (Docker Deployment)
 
-### Docker (One Command)
+We provide a monolithic multi-stage Docker container that builds the optimized React bundle and serves it via an ultra-fast production server:
 
 ```bash
-docker build -t aether-acm .
-docker run -p 8000:8000 aether-acm
-# → Full application at http://localhost:8000
+# Build the highly-optimized production image
+docker build -t aether-acm:v3 .
+
+# Launch the constellation manager 
+docker run -d -p 8000:8000 --name aether-app aether-acm:v3
 ```
+*Access the production-ready console at `http://localhost:8000`.*
 
 ---
 
@@ -197,44 +185,25 @@ docker run -p 8000:8000 aether-acm
 
 ```
 orbital-command-console/
-├── src/                          # React Frontend
-│   ├── components/
-│   │   ├── EarthScene.tsx        # Three.js 3D Earth + satellite visualization
-│   │   ├── CDMAlertFeed.tsx      # Real-time conjunction alert dashboard
-│   │   ├── SatellitePanel.tsx    # Individual satellite telemetry panel
+├── src/                          # Pure Client-Side Application
+│   ├── components/               # High-Performance UI Layer
+│   │   ├── EarthScene.tsx        # Fully GPU-accelerated WebGL swarms
+│   │   ├── CDMAlertFeed.tsx      # Real-time conjunction dashboard
+│   │   ├── SatellitePanel.tsx    # Individual satellite telemetry
 │   │   ├── StatsHeader.tsx       # Fleet-wide statistics header
 │   │   └── GroundTrack.tsx       # 2D ground track projection
 │   ├── hooks/
-│   │   └── useSimulation.ts     # Client-side orbital mechanics engine
+│   │   └── useSimulation.ts      # Core Physics Engine & V8 Worker logic
 │   ├── pages/
-│   │   ├── HeroPage.tsx         # Landing page with mission briefing
-│   │   ├── SimulationPage.tsx   # 3D orbital visualization
-│   │   └── DashboardPage.tsx    # Mission control dashboard
+│   │   ├── HeroPage.tsx          # Landing page briefing
+│   │   ├── SimulationPage.tsx    # 3D orbital visualization
+│   │   └── DashboardPage.tsx     # Mission control dashboard
 │   └── contexts/
 │       └── ThemeContext.tsx      # UI theme management
 │
-├── backend/                      # Python Backend (FastAPI)
-│   ├── config.py                # Physical constants & parameters
-│   ├── models.py                # Pydantic request/response schemas
-│   ├── state.py                 # Global simulation state manager
-│   ├── main.py                  # FastAPI application & endpoints
-│   ├── engine/
-│   │   ├── propagator.py        # RK4 + J2/J3/J4 orbital propagator
-│   │   ├── conjunction.py       # KD-Tree + golden-section TCA
-│   │   ├── maneuver.py          # RTN burn planner + Tsiolkovsky
-│   │   ├── coordinates.py       # ECI/ECEF/Geodetic/RTN transforms
-│   │   ├── comms.py             # Ground station LOS & blind conj.
-│   │   └── initializer.py       # Walker-Delta constellation seed
-│   ├── optimizer/
-│   │   ├── evasion.py           # Multi-objective evasion optimizer
-│   │   ├── scheduler.py         # Fleet-wide burn scheduler
-│   │   └── budget.py            # Fuel budget manager
-│   └── db/
-│       └── database.py          # SQLite event logger
-│
-├── Dockerfile                   # Production container
-├── requirements.txt             # Python dependencies
-└── package.json                 # Node.js dependencies
+├── Dockerfile                    # Production monolithic deployment
+├── package.json                  # Node.js dependencies
+└── tailwind.config.ts            # Styling constraints
 ```
 
 ---
@@ -266,43 +235,7 @@ orbital-command-console/
 
 ---
 
-## 🧪 API Reference
 
-### Health Check
-```bash
-curl http://localhost:8000/api/health
-```
-```json
-{
-  "status": "OK",
-  "sim_time": 1743648000.0,
-  "satellite_count": 50,
-  "debris_count": 2000,
-  "active_cdms": 7,
-  "total_delta_v_m_s": 42.85,
-  "collisions_avoided": 12,
-  "fleet_fuel_percent": 94.3
-}
-```
-
-### Advance Simulation
-```bash
-curl -X POST http://localhost:8000/api/simulate/step \
-  -H "Content-Type: application/json" \
-  -d '{"step_seconds": 60}'
-```
-
-### Trigger Autonomous Evasion
-```bash
-curl -X POST "http://localhost:8000/api/auto-evade?satellite_id=SAT-P1-01"
-```
-
-### Get Visualization Snapshot
-```bash
-curl http://localhost:8000/api/visualization/snapshot
-```
-
----
 
 ## 🏆 Competition Scoring Targets
 
