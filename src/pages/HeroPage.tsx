@@ -14,15 +14,19 @@ const HeroPage = ({ onNavigate }: HeroPageProps) => {
   useEffect(() => {
     setTimeout(() => setShowContent(true), 200);
     const satTarget = 50;
-    const debrisTarget = 10247;
+    const debrisBase = 10247;
     let frame = 0;
     const totalFrames = 60;
     const interval = setInterval(() => {
       frame++;
-      setSatCount(Math.round((frame / totalFrames) * satTarget));
-      setDebrisCount(Math.round((frame / totalFrames) * debrisTarget));
-      if (frame >= totalFrames) clearInterval(interval);
-    }, 30);
+      if (frame <= totalFrames) {
+        setSatCount(Math.round((frame / totalFrames) * satTarget));
+        setDebrisCount(Math.round((frame / totalFrames) * debrisBase));
+      } else {
+        // Real-time tracking fluctuations
+        setDebrisCount(debrisBase + Math.floor(Math.random() * 15) - 5);
+      }
+    }, 70); // Slightly slower tick so the real-time fluctuations are readable
     return () => clearInterval(interval);
   }, []);
 

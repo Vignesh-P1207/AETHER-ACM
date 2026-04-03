@@ -286,4 +286,29 @@
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--primary) / 0.3);
   }
+
+  /* Font utility */
+  .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+  .font-mono {
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Evade flash animation */
+  @keyframes evadeFlash {
+    0% { opacity: 1; }
+    30% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+
+  /* Tabular nums */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Overflow hidden */
+  body {
+    overflow: hidden;
+  }
 }
